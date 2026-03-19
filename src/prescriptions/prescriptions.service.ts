@@ -31,12 +31,18 @@ export class PrescriptionsService {
       throw new BadRequestException('O arquivo enviado deve ser um CSV');
     }
 
-    const upload = this.store.createUpload();
+    const totalRecords = this.countCsvRecords(file);
+    const upload = this.store.createUpload(totalRecords);
 
     setImmediate(() => {
       this.processUpload(upload.upload_id, file).catch((error: unknown) => {
-        const message = error instanceof Error ? error.message : 'Erro interno ao processar CSV';
-        this.logger.error(`Falha no processamento do upload ${upload.upload_id}: ${message}`);
+        const message =
+          error instanceof Error ? error.message : 'Erro interno ao processar CSV';
+
+        this.logger.error(
+          `Falha no processamento do upload ${upload.upload_id}: ${message}`,
+        );
+
         this.store.fail(upload.upload_id, {
           line: 0,
           field: 'file',
@@ -59,7 +65,22 @@ export class PrescriptionsService {
     return upload;
   }
 
-  private async processUpload(uploadId: string, file: Express.Multer.File): Promise<void> {
+  private countCsvRecords(file: Express.Multer.File): number {
+    const rawCsv = file.buffer.toString('utf-8');
+
+    const records = parse(rawCsv, {
+      columns: true,
+      skip_empty_lines: true,
+      trim: true,
+    }) as Record<string, unknown>[];
+
+    return records.length;
+  }
+
+  private async processUpload(
+    uploadId: string,
+    file: Express.Multer.File,
+  ): Promise<void> {
     const rawCsv = file.buffer.toString('utf-8');
 
     const records = parse(rawCsv, {
@@ -69,7 +90,10 @@ export class PrescriptionsService {
     }) as Record<string, unknown>[];
 
     this.store.setTotalRecords(uploadId, records.length);
-    this.logger.log(`Iniciando processamento do upload ${uploadId} com ${records.length} registros`);
+
+    this.logger.log(
+      `Iniciando processamento do upload ${uploadId} com ${records.length} registros`,
+    );
 
     for (const [index, row] of records.entries()) {
       const lineNumber = index + 2;
@@ -81,7 +105,11 @@ export class PrescriptionsService {
     this.logger.log(`Upload ${uploadId} finalizado`);
   }
 
-  private processLine(uploadId: string, row: Record<string, unknown>, lineNumber: number): void {
+  private processLine(
+    uploadId: string,
+    row: Record<string, unknown>,
+    lineNumber: number,
+  ): void {
     if (typeof row.id === 'string' && this.store.hasPrescription(row.id.trim())) {
       this.store.addError(uploadId, {
         line: lineNumber,
@@ -95,7 +123,7 @@ export class PrescriptionsService {
     const parsed = prescriptionSchema.safeParse(row);
 
     if (!parsed.success) {
-      const flattenedErrors = parsed.error.issues.map<UploadError>((issue) => ({
+      const flattenedErrors: UploadError[] = parsed.error.issues.map((issue) => ({
         line: lineNumber,
         field: issue.path.join('.') || 'row',
         message: issue.message,
@@ -127,7 +155,10 @@ export class PrescriptionsService {
     };
   }
 
-  private resolveIssueValue(row: Record<string, unknown>, path: (string | number)[]): unknown {
+  private resolveIssueValue(
+    row: Record<string, unknown>,
+    path: (string | number)[],
+  ): unknown {
     if (!path.length) return row;
 
     const first = path[0];

@@ -86,31 +86,19 @@ id,date,patient_cpf,doctor_crm,doctor_uf,medication,controlled,dosage,frequency,
 
 - `id`: obrigatório e único no sistema
 - `date`: data válida e não futura
-- `patient_cpf`: exatamente 11 dígitos numéricos
+- `patient_cpf`: cpf válido apenas 11 digitos numericos
 - `doctor_crm`: apenas números
 - `doctor_uf`: UF válida do Brasil
 - `medication`: obrigatório
 - `controlled`: boolean; vazio é tratado como `false`
 - `dosage`: obrigatório
-- `frequency`: número positivo
+- `frequency`: número positivo e aceita o padrão que estava como exemplo tambem (8/8h)
 - `duration`: obrigatório, positivo e máximo de 90 dias
 
 ### Regras de negócio
 
 - medicamento controlado exige `notes`
 - medicamento controlado deve ter `frequency <= 60`
-
-## Decisão técnica importante sobre `frequency`
-
-O enunciado descreve `frequency` como **número positivo**, mas o CSV de exemplo usa valores como `8/8h` e `12/12h`.
-
-Para acomodar os dois cenários, esta implementação faz o seguinte:
-
-- se vier número puro, usa o número normalmente
-- se vier no formato `8/8h`, interpreta como `8`
-- se vier `12/12h`, interpreta como `12`
-
-Assim o sistema continua compatível com o CSV fornecido sem ignorar a regra de negócio do desafio.
 
 ## Estrutura do projeto
 
@@ -133,9 +121,9 @@ src/
 
 ## Observações
 
-- o armazenamento é **in-memory**, como permitido no desafio
+- o armazenamento é **in-memory**
 - ao reiniciar a aplicação, uploads e prescrições são perdidos
-- o processamento é assíncrono via `setImmediate`, suficiente para a proposta do teste
+- o processamento é assíncrono via `setImmediate`
 - o limite atual de upload é **10 MB**
 
 ## Melhorias futuras

@@ -25,7 +25,7 @@ export interface PrescriptionRecord {
   medication: string;
   controlled: boolean;
   dosage: string;
-  frequency: number;
+  frequency: string;
   duration: number;
   notes?: string;
 }

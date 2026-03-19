@@ -7,11 +7,11 @@ export class PrescriptionsStore {
   private readonly uploads = new Map<string, UploadStatus>();
   private readonly prescriptions = new Map<string, PrescriptionRecord>();
 
-  createUpload(): UploadStatus {
+  createUpload(totalRecords = 0): UploadStatus {
     const upload: UploadStatus = {
       upload_id: randomUUID(),
       status: 'processing',
-      total_records: 0,
+      total_records: totalRecords,
       processed_records: 0,
       valid_records: 0,
       errors: [],
@@ -47,7 +47,7 @@ export class PrescriptionsStore {
 
   complete(uploadId: string): void {
     const current = this.getUploadOrThrow(uploadId);
-    current.status = current.errors.length > 0 ? 'completed' : 'completed';
+    current.status = 'completed';
   }
 
   fail(uploadId: string, error?: UploadError): void {
@@ -73,9 +73,11 @@ export class PrescriptionsStore {
 
   private getUploadOrThrow(uploadId: string): UploadStatus {
     const upload = this.uploads.get(uploadId);
+
     if (!upload) {
       throw new Error(`Upload ${uploadId} não encontrado no store.`);
     }
+
     return upload;
   }
 }
