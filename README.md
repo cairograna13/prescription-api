@@ -1,6 +1,6 @@
-# Sistema de Receituário Digital
+# Prescription API com uma arquitetura mais desenvolvida
 
-Implementação da tarefa em **NestJS + Zod**, com processamento assíncrono de CSV, validação robusta e armazenamento **in-memory**.
+Implementação da tarefa em **NestJS + Zod**, com processamento assíncrono de CSV, validação robusta e armazenamento **in-memory**, feita utilizando todos os recursos disponíveis.
 
 ## O que foi implementado
 
@@ -68,16 +68,19 @@ curl.exe http://localhost:3000/api/prescriptions/upload/SEU_UPLOAD_ID
 
 ```csv
 id,date,patient_cpf,doctor_crm,doctor_uf,medication,controlled,dosage,frequency,duration,notes
-1,2024-01-10,12345678901,12345,SP,Paracetamol,false,500mg,8,5,
-2,2023-12-05,98765432100,54321,RJ,Ibuprofeno,false,400mg,6,7,
-3,2024-02-20,11122233344,99999,MG,Amoxicilina,false,250mg,12,10,
-4,2024-03-01,55566677788,77777,RS,Diazepam,true,10mg,24,30,Uso controlado
-5,2024-01-15,22233344455,88888,SC,Loratadina,false,10mg,24,15,
-6,2023-11-11,33344455566,66666,BA,Omeprazol,false,20mg,24,20,
-7,2024-02-01,44455566677,55555,PR,Clonazepam,true,2mg,12,60,Paciente ansioso
-8,2024-01-25,66677788899,44444,CE,Metformina,false,850mg,12,90,
-9,2023-10-30,77788899900,33333,GO,Losartana,false,50mg,24,30,
-10,2024-02-10,88899900011,22222,PE,Codeina,true,30mg,24,10,Dor intensa
+1,2024-01-10,16959478006,12345,SP,Paracetamol,false,500mg,8,5,
+2,2023-12-05,88803817093,54321,RJ,Ibuprofeno,false,400mg,6,7,
+3,2024-02-20,47595882052,99999,MG,Amoxicilina,false,250mg,12,10,
+4,2024-03-01,59301479060,77777,RS,Diazepam,true,10mg,24,30,Uso controlado
+5,2024-01-15,58187021039,88888,SC,Loratadina,false,10mg,24,15,
+6,2023-11-11,70094117004,66666,BA,Omeprazol,false,20mg,24,20,
+7,2024-02-01,72564642071,55555,PR,Clonazepam,true,2mg,12,60,Paciente ansioso
+8,2024-01-25,03489862031,44444,CE,Metformina,false,850mg,12,90,
+9,2023-10-30,14016441048,33333,GO,Losartana,false,50mg,24,30,
+1,2024-02-10,42969777096,22222,PE,Codeina,true,30mg,24,10,Dor intensa
+RX001,2024-01-15,64082418083,123456,SP,Dipirona Sódica,false,500mg,8/8h,7,Tomar após as refeições
+RX002,2024-01-16,36591805052,789012,RJ,Amoxicilina,false,875mg,12/12h,10,
+RX003,2024-01-17,13409340009,123456,SP,Lorazepam,true,1mg,12/12h,30,1cp as 7h e as 19h
 ```
 
 ## Regras de validação implementadas
@@ -125,11 +128,3 @@ src/
 - ao reiniciar a aplicação, uploads e prescrições são perdidos
 - o processamento é assíncrono via `setImmediate`
 - o limite atual de upload é **10 MB**
-
-## Melhorias futuras
-
-- persistir em banco de dados
-- usar fila real (BullMQ, RabbitMQ, SQS)
-- paginação dos erros
-- endpoint para consultar prescrições válidas importadas
-- testes unitários e de integração
