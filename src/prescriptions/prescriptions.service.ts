@@ -117,6 +117,7 @@ export class PrescriptionsService {
         message: 'id já existe no sistema',
         value: row.id,
       });
+      this.store.incrementInvalid(uploadId);
       return;
     }
 
@@ -131,6 +132,7 @@ export class PrescriptionsService {
       }));
 
       flattenedErrors.forEach((error) => this.store.addError(uploadId, error));
+      this.store.incrementInvalid(uploadId);
       return;
     }
 

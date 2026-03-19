@@ -13,6 +13,7 @@ export interface UploadStatus {
   total_records: number;
   processed_records: number;
   valid_records: number;
+  invalid_records: number;
   errors: UploadError[];
 }
 

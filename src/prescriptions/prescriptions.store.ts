@@ -14,6 +14,7 @@ export class PrescriptionsStore {
       total_records: totalRecords,
       processed_records: 0,
       valid_records: 0,
+      invalid_records: 0,
       errors: [],
     };
 
@@ -38,6 +39,11 @@ export class PrescriptionsStore {
   incrementValid(uploadId: string): void {
     const current = this.getUploadOrThrow(uploadId);
     current.valid_records += 1;
+  }
+
+  incrementInvalid(uploadId: string): void {
+    const current = this.getUploadOrThrow(uploadId);
+    current.invalid_records += 1;
   }
 
   addError(uploadId: string, error: UploadError): void {
